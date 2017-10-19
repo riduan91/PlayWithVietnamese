@@ -22,11 +22,11 @@ sys.path.append(BASIC_SOURCE_DIR)
 
 from Word import Word
 
-WORD_FILE = "../../BasicData/AllPureVietnameseWords.txt"
-SYLLABLE_FILE = "../../BasicData/AllPureVietnameseSyllables.txt"
-SINO_VNESE_DICTIONARY_FILE = "../../BasicData/AllSinoVietnameseSyllablesWithMeaning.txt"
-SINO_VNESE_CHARACTER_FILE = "../../BasicData/AllSinoVietnameseSyllables.txt"
-SINO_VNESE_CLASSIFIED_WORD_FILE = "../../BasicData/SinoVneseClassifiedWords.txt"
+WORD_FILE = "../../Data/AllPureVietnameseWords.txt"
+SYLLABLE_FILE = "../../Data/AllPureVietnameseSyllables.txt"
+SINO_VNESE_DICTIONARY_FILE = "../../Data/AllSinoVietnameseSyllablesWithMeaning.txt"
+SINO_VNESE_CHARACTER_FILE = "../../Data/AllSinoVietnameseSyllables.txt"
+SINO_VNESE_CLASSIFIED_WORD_FILE = "../../Data/SinoVneseClassifiedWords.txt"
 
 def ask_sinovietnamese_word(word):
 

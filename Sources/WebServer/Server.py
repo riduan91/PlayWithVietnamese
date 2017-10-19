@@ -5,11 +5,9 @@ import operator
 from flask import Flask, render_template, request
 app = Flask(__name__)
 
-BASIC_SOURCE_DIR = "../Basic/"
-MONGO_SOURCE_DIR = "../Mongo/"
 import sys
-sys.path.append(BASIC_SOURCE_DIR)
-sys.path.append(MONGO_SOURCE_DIR)
+sys.path.append("../Basic/")
+sys.path.append("../Requests/")
 
 from FindQuasiRhymableWords import findQuasiRhymableWords 
 from Word import Word
@@ -36,4 +34,4 @@ def result():
     
 port = 8800
 if __name__ == '__main__':
-    app.run(host = '0.0.0.0', port = 8800, debug=True)
+    app.run(host = '0.0.0.0', port = 8800, debug = True)

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun 20 18:10:57 2017
+Created on Thu Oct 19 17:08:21 2017
 
 @author: ndoannguyen
 """
+
 CONSONANT_VLETTER_DICTIONARY = {"B":"b", "C":"c", "D":"d", "Đ":"đ", "E":"e", "F":"f", "G":"g", 
                                "H":"h", "J":"j", "K":"k", "L":"l", "M":"m", "N":"n", "P":"p",
                                "Q":"q", "R":"r", "S":"s", "T":"t", "V":"v", "W":"w", "X":"x",
@@ -57,10 +58,3 @@ LOWER_VOWEL_VLETTER_LIST = VOWEL_VLETTER_DICTIONARY.values()
 LOWER_VLETTER_LIST = LOWER_CONSONANT_VLETTER_LIST + LOWER_VOWEL_VLETTER_LIST
 
 VLETTER_LIST = UPPER_VLETTER_LIST + LOWER_VLETTER_LIST
-
-BASIC_DATA_DIR = "../../BasicData/"
-RAW_WORDS_FILE_NAME = "AllRawWords.txt"
-PURE_VNESE_WORDS_FILE_NAME = "AllPureVietnameseWords.txt"
-PURE_VNESE_SYLLABLES_FILE_NAME = "AllPureVietnameseSyllables.txt"
-RHYMES_FILE_NAME = "AllRhymes.txt"
-FREQUENCY_OF_WORD_FILE_NAME = "Statistics_12-1707.txt"

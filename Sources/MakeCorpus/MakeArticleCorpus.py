@@ -8,7 +8,7 @@ Created on Sat Jul 15 18:43:30 2017
 import os, urllib, re
 from bs4 import BeautifulSoup
 
-DATA_DIR = "../../Corpus/"
+DATA_DIR = "../../FrequencyData/"
 TMP_DIR = "tmp"
 
 CAT_ID = {          "Thời sự":          1001005, 
@@ -149,6 +149,7 @@ def clean_content(string):
     return string
 
 prepare_stockage()
+
 """
 store_article_url(1500069600, 1500153144, "articles_1507.txt")
 store_articles_content("articles_1507.txt" , "data_1507.txt")
