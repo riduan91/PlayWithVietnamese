@@ -7,6 +7,7 @@ Created on Sat Jul 15 18:43:30 2017
 
 import os, urllib, re
 from bs4 import BeautifulSoup
+import time
 
 DATA_DIR = "../../FrequencyData/"
 TMP_DIR = "tmp"
@@ -35,7 +36,6 @@ BASE_URL = "http://vnexpress.net/category/day/"
 
 CAT_URL = {}
 
-
 def prepare_stockage():
     listdir = os.listdir(DATA_DIR)
     if TMP_DIR not in listdir:
@@ -44,21 +44,39 @@ def prepare_stockage():
 def download_page(url):
     return urllib.urlopen(url)
 
-def get_article_url(fromdate, todate):
+def get_article_url(fromdate, todate, categories):
     article_urls = []
-    for cat_name in CAT_ID.keys():
-        CAT_URL[cat_name] = "%s?cateid=%d&fromdate=%d&todate=%d&alldate=%d||" % (BASE_URL, CAT_ID[cat_name], fromdate, todate, CAT_ID[cat_name])        
-        f = download_page(CAT_URL[cat_name]).read()
-        tree = BeautifulSoup(f)
-        articles = tree.find_all('div', 'title_news')
-        for article in articles:
-            href = article.find('a')['href']
-            if href not in article_urls:
-                article_urls.append(href) 
+    if categories == "all":
+        for cat_name in CAT_ID.keys():
+            article_urls += get_article_url(fromdate, todate, cat_name)
+    else:
+        cat_name = categories
+        print("Category %s" % cat_name)
+        has_next = True
+        cat_url = "%s?cateid=%d&fromdate=%d&todate=%d&allcate=%d|%d|" % (BASE_URL, CAT_ID[cat_name], fromdate, todate, CAT_ID[cat_name], CAT_ID[cat_name])          
+        page_counter = 0        
+        while has_next:
+            page_counter += 1
+            print("Searching in page %d: %s" % (page_counter, cat_url))
+            f = download_page(cat_url).read()
+            tree = BeautifulSoup(f)
+            articles = tree.find('section', 'sidebar_1').find_all('h3', 'title_news')
+            for article in articles:
+                href = article.find('a')['href']
+                if href not in article_urls:
+                    article_urls.append(href)
+            next_page = tree.find('a', 'next')
+            has_next = next_page != None
+            if has_next:
+                cat_url = "http://vnexpress.net" + next_page['href']
     return article_urls
 
-def store_article_url(fromdate, todate, filename):
-    articles = get_article_url(fromdate, todate)
+def store_article_url(time_string_1, time_string_2, filename, categories = "all"):
+    print("Searching for links of all articles between %s and %s, category %s..." % (time_string_1, time_string_2, categories))
+    fromdate = int(time.mktime(time.strptime(time_string_1, "%d/%m/%y")))
+    todate = int(time.mktime(time.strptime(time_string_2, "%d/%m/%y"))) + 24 * 60 * 60
+    articles = get_article_url(fromdate, todate, categories)
+    #print("Saving links into %s." % (DATA_DIR + filename))
     f = open(DATA_DIR + filename, 'w')
     f.write("\n".join(articles))
     f.close()
@@ -66,21 +84,12 @@ def store_article_url(fromdate, todate, filename):
 def get_article_content(article):
     f = download_page(article).read()
     tree = BeautifulSoup(f)
-    block_col_480 = tree.find_all('div', 'block_col_480')
-    if block_col_480 == []:
-         block_col_480 = tree.find_all('div', 'main_content_detail width_common')
-    if block_col_480 == []:
-        return None, None, None
-    block_col_480 = block_col_480[0]
-    title_news = block_col_480.find_all('div', 'title_news')[0].find_all('h1')[0].contents[0]
+    sidebar = tree.find('section', 'sidebar_1')
+    title_news = sidebar.find('h1', 'title_news_detail').contents[0]
     title_news = clean_title(title_news)
-    short_intro = block_col_480.find_all('div', 'short_intro txt_666')
-    if short_intro == []:
-        short_intro = block_col_480.find_all('h2', 'short_intro txt_666')
-    if short_intro == []:
-        short_intro = block_col_480.find_all('h3', 'short_intro txt_666')
-    short_intro = short_intro[0].contents[0]
-    normal = block_col_480.find_all('p', 'Normal')
+    short_intro = sidebar.find('h2', 'description').contents[0]
+    short_intro = clean_short_intro(short_intro)
+    normal = sidebar.find_all('p', 'Normal')
     contents = []
     for content in normal:
         quasi_paragraphs = content.contents
@@ -107,12 +116,12 @@ def store_articles_content(titlefile, datafile):
             title_news, short_intro, contents = get_article_content(title)
 
             if title_news != None:
-                res = title_news + "\n\n"
-                res += short_intro + "\n\n"
+                res = title_news + "\t\t"
+                res += short_intro + "\t\t"
                 for content in contents:
-                    res += content + "\n"
-                    res += "\n"
-                g.write(res.encode('utf-8'))
+                    res += content + "\t"
+                res += "\n"
+                g.write(res.encode('utf-8'))    
         except:
             continue   
     g.close()
@@ -148,7 +157,7 @@ def clean_content(string):
         string = string[:-1]
     return string
 
-prepare_stockage()
+#prepare_stockage()
 
 """
 store_article_url(1500069600, 1500153144, "articles_1507.txt")
@@ -156,3 +165,6 @@ store_articles_content("articles_1507.txt" , "data_1507.txt")
 store_article_url(1499983200, 1500066744, "articles_1407.txt")
 store_articles_content("articles_1407.txt" , "data_1407.txt")
 """
+
+store_article_url("01/01/17", "31/01/17", "SportTitles_Jan2017.txt", "Thể thao")
+store_articles_content("SportTitles_Jan2017.txt", "Sport_Jan2017.txt")
